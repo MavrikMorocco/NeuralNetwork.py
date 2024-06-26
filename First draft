@@ -1,0 +1,29 @@
+# Import necessary libraries
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Load the MNIST dataset
+mnist = tf.keras.datasets.mnist
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+
+# Normalize the images to a range of 0 to 1
+train_images, test_images = train_images / 255.0, test_images / 255.0
+
+# Define a simple Sequential model
+model = models.Sequential([
+  layers.Flatten(input_shape=(28, 28)),  # Convert each 28x28 image into a flat array of 784 pixels
+  layers.Dense(128, activation='relu'),  # Fully connected layer with 128 neurons and ReLU activation
+  layers.Dense(10)                       # Output layer with 10 neurons for each digit
+])
+
+# Compile the model
+model.compile(optimizer='adam',  # Optimizer
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  # Loss function
+              metrics=['accuracy'])  # Metric to monitor
+
+# Train the model
+model.fit(train_images, train_labels, epochs=5)  # Train for 5 epochs
+
+# Evaluate the model
+test_loss, test_accuracy = model.evaluate(test_images, test_labels)
+print(f'\nTest accuracy: {test_accuracy * 100:.2f}%')
